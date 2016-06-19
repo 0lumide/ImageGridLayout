@@ -5,36 +5,26 @@
     android:layout_gravity="center"
     android:orientation="vertical">
 
-    <co.mide.imagecoordinatorlayout.ImageGridLayout
+    <co.mide.imagegridlayout.ImageGridLayout
         android:layout_width="300dp"
         android:layout_height="150dp"
         android:layout_gravity="center"
         android:id="@+id/grid"
+        android:background="#fff000"
         android:columnCount="4"
         android:animateLayoutChanges="true"
         android:orientation="horizontal">
-        <!--<ImageView-->
-            <!--android:layout_column="0"-->
-            <!--android:src="@drawable/dld97n3"-->
-            <!--android:layout_rowSpan="2"-->
-            <!--android:alpha="1"-->
-            <!--android:layout_columnSpan="2"-->
-            <!--android:scaleType="centerCrop"-->
-            <!--android:layout_width="150dp"-->
-            <!--android:layout_height="150dp"/>-->
-        <!--<TextView-->
-            <!--android:background="#ccffffff"-->
-            <!--android:textSize="28sp"-->
-            <!--android:gravity="center"-->
-            <!--android:layout_column="0"-->
-            <!--android:layout_row="0"-->
-            <!--android:text="+2"-->
-            <!--android:layout_rowSpan="2"-->
-            <!--android:layout_columnSpan="2"-->
-            <!--android:scaleType="centerCrop"-->
-            <!--android:layout_width="150dp"-->
-            <!--android:layout_height="150dp"/>-->
-    </co.mide.imagecoordinatorlayout.ImageGridLayout>
+        <ImageView
+            android:src="@mipmap/ic_launcher"
+            android:scaleType="centerCrop"
+            android:layout_width="250dp"
+            android:layout_height="150dp"/>
+        <ImageView
+            android:src="@mipmap/ic_launcher"
+            android:scaleType="centerCrop"
+            android:layout_width="250dp"
+            android:layout_height="150dp"/>
+    </co.mide.imagegridlayout.ImageGridLayout>
     <Button
         android:text="+ghh"
         android:onClick="addNewImageView"

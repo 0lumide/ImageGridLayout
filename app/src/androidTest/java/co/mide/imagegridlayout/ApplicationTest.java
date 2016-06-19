@@ -1,4 +1,4 @@
-package co.mide.imagecoordinatorlayout;
+package co.mide.imagegridlayout;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

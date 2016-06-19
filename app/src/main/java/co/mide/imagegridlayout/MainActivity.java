@@ -1,4 +1,4 @@
-package co.mide.imagecoordinatorlayout;
+package co.mide.imagegridlayout;
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,29 +20,33 @@ public class MainActivity extends AppCompatActivity {
     public void addNewImageView(View v){
         ImageView imageView = new ImageView(this);
         imageView.setImageDrawable(ContextCompat.getDrawable(this, getImage(++i)));
-        gridLayout.addView(imageView);
+        gridLayout.addView(imageView, null);
     }
 
     private int getImage(int num){
         switch(num){
             case 1:
-                return R.drawable.a1;
+                return R.drawable.image1;
             case 2:
-                return R.drawable.a2;
+                return R.drawable.image2;
             case 3:
-                return R.drawable.a3;
+                return R.drawable.image3;
             case 4:
-                return R.drawable.a4;
+                return R.drawable.image4;
             case 5:
-                return R.drawable.a5;
+                return R.drawable.image5;
             case 6:
-                return R.drawable.a6;
+                return R.drawable.image6;
             case 7:
-                return R.drawable.a7;
+                return R.drawable.image7;
             case 8:
-                return R.drawable.a8;
+                return R.drawable.image8;
+            case 9:
+                return R.drawable.image9;
+            case 10:
+                return R.drawable.image10;
             default:
-                return R.drawable.a1;
+                return R.drawable.more;
         }
     }
 }

@@ -1,4 +1,4 @@
-package co.mide.imagecoordinatorlayout;
+package co.mide.imagegridlayout;
 
 import org.junit.Test;
 

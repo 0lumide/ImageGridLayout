@@ -1,4 +1,4 @@
-package co.mide.imagecoordinatorlayout;
+package co.mide.imagegridlayout;
 
 import android.annotation.SuppressLint;
 import android.graphics.PointF;

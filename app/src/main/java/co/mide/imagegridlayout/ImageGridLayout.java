@@ -1,14 +1,12 @@
-package co.mide.imagecoordinatorlayout;
+package co.mide.imagegridlayout;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.LinkedList;
 
@@ -20,9 +18,6 @@ import java.util.LinkedList;
 public class ImageGridLayout extends GridLayout {
     LinkedList<GridPosition> queue;
     LinkedList<ImageView> views;
-    private int maxImages = 7;
-    private int extra = 0;
-    private TextView textView;
 
     public ImageGridLayout(Context context){
         super(context);
@@ -41,13 +36,13 @@ public class ImageGridLayout extends GridLayout {
 
     private void init(){
         views = new LinkedList<>();
+        Log.d("init", "start");
     }
 
-    private void initViews(){
+    private void initViews(int index){
         GridPosition lowerRightCorner = null;
-        Log.e("init", "init");
         queue = new LinkedList<>();
-        for(int i = 0; i < views.size() && i < maxImages; i++) {
+        for(int i = 0; i < views.size(); i++) {
             if(i == 0){
                 GridPosition gridPosition = new GridPosition(getWidth(), getHeight());
                 gridPosition.setIndex(i);
@@ -62,9 +57,9 @@ public class ImageGridLayout extends GridLayout {
             }
         }
 
-        for(int i = 0; i < queue.size(); i++) {
-            Log.d("queue", queue.get(i).toString());
-        }
+//        for(int i = 0; i < queue.size(); i++) {
+//            Log.d("queue", queue.get(i).toString());
+//        }
 
         if(queue.size() > 0){
             int columnCount = queue.getLast().getInverseWidth() > queue.getLast().getInverseHeight()?
@@ -74,79 +69,49 @@ public class ImageGridLayout extends GridLayout {
         }
 
         int size = queue.size();
-        for(int i = 0; i < size && i < maxImages; i++){
+        for(int i = 0; i < size; i++){
             GridPosition gridPosition = queue.poll();
             ImageView child = views.get(gridPosition.getIndex());
             child.setScaleType(ImageView.ScaleType.CENTER_CROP);
             LayoutParams params = new LayoutParams();
-            params.height = getHeight()/gridPosition.getInverseHeight();
-            params.width = getWidth()/gridPosition.getInverseWidth();
+            params.setMargins(2, 2, 2, 2);
+            params.height = getHeight()/gridPosition.getInverseHeight() - params.topMargin - params.bottomMargin;
+            params.width = getWidth()/gridPosition.getInverseWidth() - params.leftMargin - params.rightMargin;
             params.columnSpec = GridLayout.spec((int)(gridPosition.getPositionX()*getColumnCount()),
                     getColumnCount()/gridPosition.getInverseWidth());
             params.rowSpec = GridLayout.spec((int)(gridPosition.getPositionY()*getColumnCount()),
                     getColumnCount()/gridPosition.getInverseHeight());
-            params.setMargins(2, 2, 2, 2);
             Log.d("children", "child: "+ (i+1));
-            child.setLayoutParams(params);
 
             if(lowerRightCorner == null || (gridPosition.getPositionX() >= lowerRightCorner.getPositionX()
                     && gridPosition.getPositionY() >= lowerRightCorner.getPositionY())){
                 lowerRightCorner = gridPosition;
             }
-            if(gridPosition.getIndex() == size - 1 && extra <= 0) {
-                super.addView(child);
+            if(gridPosition.getIndex() == index) {
+                Log.d("super", "super index "+index);
+                super.addView(child, index, params);
+            }else{
+                child.setLayoutParams(params);
             }
-        }
-        if(extra > 0) {
-            if(textView == null) {
-                textView = new TextView(getContext());
-                textView.setTextSize(0.08f * (getWidth() / lowerRightCorner.getInverseWidth()));
-                textView.setBackgroundColor(Color.parseColor("#aaffffff"));
-                textView.setGravity(Gravity.CENTER);
-
-                LayoutParams params2 = new LayoutParams();
-                params2.height = getHeight() / lowerRightCorner.getInverseHeight();
-                params2.width = getWidth() / lowerRightCorner.getInverseWidth();
-                params2.columnSpec = GridLayout.spec((int) (lowerRightCorner.getPositionX() * getColumnCount()),
-                        getColumnCount() / lowerRightCorner.getInverseWidth());
-                params2.rowSpec = GridLayout.spec((int) (lowerRightCorner.getPositionY() * getColumnCount()),
-                        getColumnCount() / lowerRightCorner.getInverseHeight());
-                params2.setMargins(2, 2, 2, 2);
-                textView.setLayoutParams(params2);
-                super.addView(textView);
-            }
-            textView.setText(String.format("+%d", extra));
         }
     }
 
-    /**
-     * This retrieves the number of images after which no more images would be added to the layout
-     * @return the limiting number of images. It defaults to 10
-     */
-    public int getMaxImages(){
-        return this.maxImages;
-    }
-
-    /**
-     * This sets the number of more images that is shown
-     * @param num the number of images to show
-     */
-    public void setMoreImages(int num){
-        extra = num;
-        initViews();
+    @Override
+    protected void onLayout (boolean changed, int left, int top, int right, int bottom){
+        if(changed) {
+            initViews(views.size());
+        }
+        super.onLayout(changed, left, top, right, bottom);
     }
 
     /**
      * This adds the ImageView to the layout
      * @param child the ImageView to be inserted into the layout
      */
-    public void addView(ImageView child){
-        if(views.size() < maxImages) {
-            views.add(child);
-        }else{
-            extra++;
-        }
-        initViews();
+    @Override
+    public void addView(View child){
+        Log.d("addView", "null");
+        addView(child, views.size());
     }
 
     /**
@@ -155,7 +120,9 @@ public class ImageGridLayout extends GridLayout {
      * @param index the position where the ImageView should be inserted
      * @param params this value is ignored
      */
-    public void addView(ImageView child, int index, ViewGroup.LayoutParams params){
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params){
+        Log.d("addView", "index, params");
         addView(child, index);
     }
 
@@ -164,8 +131,10 @@ public class ImageGridLayout extends GridLayout {
      * @param child the imageView to add to the layout
      * @param params this value is ignored
      */
-    public void addView(ImageView child, ViewGroup.LayoutParams params){
-        addView(child);
+    @Override
+    public void addView(View child, ViewGroup.LayoutParams params){
+        Log.d("addView", "params");
+        addView(child, views.size());
     }
 
     /**
@@ -173,13 +142,20 @@ public class ImageGridLayout extends GridLayout {
      * @param child the ImageView to add to the layout
      * @param index the index at which to insert the ImageView
      */
-    public void	addView(ImageView child, int index){
-        if(views.size() < maxImages) {
-            views.add(index, child);
+    @Override
+    public void	addView(View child, int index){
+        Log.d("addView", "index");
+        Log.d("index", index+"");
+        if(child instanceof ImageView){
+            if(index == -1 || index == views.size()){
+                views.add((ImageView) child);
+            }else{
+                views.add(index, (ImageView) child);
+            }
+            initViews(index);
         }else{
-            extra++;
+            throw new IllegalArgumentException("child must be an ImageView or a subclass of ImageView");
         }
-        initViews();
     }
 
     /**
@@ -188,12 +164,20 @@ public class ImageGridLayout extends GridLayout {
      * @param width this value is ignored
      * @param height this value is also ignored
      */
-    public void	addView(ImageView child, int width, int height){
-        addView(child);
+    @Override
+    public void	addView(View child, int width, int height){
+        Log.d("addView", "width, height");
+        addView(child, views.size());
     }
 
     @Override
     public int getChildCount(){
-        return views.size();
+        if(views == null) {
+            Log.d("size", "null");
+        }else {
+            Log.d("size", views.size() + "");
+        }
+        Log.d("super size", super.getChildCount()+"");
+        return super.getChildCount();
     }
 }

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "co.mide.imagecoordinatorlayout"
+        applicationId "co.mide.imagegridlayout"
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
