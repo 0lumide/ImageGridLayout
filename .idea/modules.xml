@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ImageGridLayout.iml" filepath="$PROJECT_DIR$/ImageGridLayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/textimageview/textimageview.iml" filepath="$PROJECT_DIR$/textimageview/textimageview.iml" />
     </modules>
   </component>
 </project>

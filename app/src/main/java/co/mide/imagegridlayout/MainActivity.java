@@ -1,5 +1,9 @@
 package co.mide.imagegridlayout;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.RippleDrawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,18 +12,45 @@ import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
     ImageGridLayout gridLayout;
-    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_layout);
         gridLayout = (ImageGridLayout)findViewById(R.id.grid);
+        findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gridLayout.setMinimumImageSize(1, 400);
+            }
+        });
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNewImageView(v);
+            }
+        });
+        findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gridLayout.removeViewAt(0);
+            }
+        });
     }
 
     public void addNewImageView(View v){
         ImageView imageView = new ImageView(this);
-        imageView.setImageDrawable(ContextCompat.getDrawable(this, getImage(++i)));
+//        imageView.setImageDrawable(ContextCompat.getDrawable(this, getImage(gridLayout.getChildCount() + 1)));
+//        imageView.setImageDrawable(ContextCompat.getDrawable(this, ));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //TODO use ColorUtils.blendArgb to determine ripple color
+            RippleDrawable rippledImage = new RippleDrawable(
+                    ColorStateList.valueOf(Color.RED), ContextCompat.getDrawable(this, getImage(gridLayout.getChildCount() + 1)), null);
+            imageView.setImageDrawable(rippledImage);
+            imageView.setClickable(true);
+        }else{
+            imageView.setImageDrawable(ContextCompat.getDrawable(this, getImage(gridLayout.getChildCount() + 1)));
+        }
         gridLayout.addView(imageView, null);
     }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ImageGridLayout">
+        <attr name="maxImageCount" format="integer"/>
+        <attr name="moreColor" format="color"/>
+        <attr name="minImageHeight" format="integer"/>
+        <attr name="minImageWidth" format="integer"/>
+    </declare-styleable>
+</resources>
