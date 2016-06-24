@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gridLayout.setMinimumImageSize(1, 400);
+//                gridLayout.setMinimumImageSize(300, 300);
             }
         });
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             imageView.setImageDrawable(ContextCompat.getDrawable(this, getImage(gridLayout.getChildCount() + 1)));
         }
-        gridLayout.addView(imageView, null);
+        gridLayout.addView(imageView);
     }
 
     private int getImage(int num){
