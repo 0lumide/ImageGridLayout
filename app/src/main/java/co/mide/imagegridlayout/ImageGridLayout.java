@@ -6,6 +6,7 @@ import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import java.util.HashMap;
@@ -47,17 +48,16 @@ public class ImageGridLayout extends GridLayout {
         for(int i = 0; i < queue.size(); i++){
             GridPosition gridPosition = queue.get(i);
 
-            LayoutParams params = layoutParamsFromGridPosition(gridPosition);
-
             View child = getChildAt(gridPosition.getIndex());
+            LayoutParams params = (LayoutParams)child.getLayoutParams();
+            layoutParamsFromGridPosition(gridPosition, params);
+            child.setLayoutParams(params);
             if(child instanceof ImageView)
                 ((ImageView)child).setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-            child.setLayoutParams(params);
         }
     }
 
-    private void updateLayoutRepresentation(int newSize, boolean reset){
+    private void updateLayoutRepresentation(int width, int height, int newSize, boolean reset){
         int start;
         if(reset || queue.size() >= newSize){
             queue = new LinkedList<>();
@@ -69,7 +69,7 @@ public class ImageGridLayout extends GridLayout {
 
         for(int i = start; i < newSize; i++) {
             if(i == 0){
-                GridPosition gridPosition = new GridPosition(getWidth(), getHeight());
+                GridPosition gridPosition = new GridPosition(width, height);
                 gridPosition.setIndex(i);
                 queuePosition.put(gridPosition.getIndex(), gridPosition);
                 queue.add(gridPosition);
@@ -84,46 +84,96 @@ public class ImageGridLayout extends GridLayout {
         }
     }
 
-    private LayoutParams layoutParamsFromGridPosition(GridPosition gridPosition){
-        LayoutParams params = new LayoutParams();
+    private void layoutParamsFromGridPosition(GridPosition gridPosition, LayoutParams params){
+        int columnCount = getNewColumnCount();
+
         params.setMargins(MARGIN, MARGIN, MARGIN, MARGIN);
         params.height = gridPosition.getHeight() - params.topMargin - params.bottomMargin;
         params.width = gridPosition.getWidth() - params.leftMargin - params.rightMargin;
-        params.columnSpec = GridLayout.spec((int)(gridPosition.getPositionX()*getColumnCount()),
-                getColumnCount()/gridPosition.getInverseWidth());
-        params.rowSpec = GridLayout.spec((int)(gridPosition.getPositionY()*getColumnCount()),
-                getColumnCount()/gridPosition.getInverseHeight());
-        return params;
+        params.columnSpec = GridLayout.spec((int)(gridPosition.getPositionX()*columnCount),
+                columnCount/gridPosition.getInverseWidth());
+        params.rowSpec = GridLayout.spec((int)(gridPosition.getPositionY()*columnCount),
+                columnCount/gridPosition.getInverseHeight());
+    }
+
+    private int getNewColumnCount(){
+        if(!queue.isEmpty())
+            return queue.getLast().getInverseWidth() > queue.getLast().getInverseHeight() ?
+                queue.getLast().getInverseWidth() : queue.getLast().getInverseHeight();
+        return 1;
+    }
+
+    /**
+     * This is equivalent to addView(ImageView, index)
+     * @param child the ImageView to be inserted into the layout
+     * @param index the position where the ImageView should be inserted
+     * @param ignoredParams this value is ignored
+     */
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams ignoredParams){
+        if(index == -1)
+            index = getImageCount();
+        if(index >= 0 && index <= getImageCount()) {
+            updateLayoutRepresentation(getWidth(), getHeight(), getChildCount() + 1, false);
+
+//            int columnCount = getNewColumnCount();
+
+            //add the new view
+            if (child instanceof ImageView)
+                ((ImageView) child).setScaleType(ImageView.ScaleType.CENTER_CROP);
+            GridPosition gridPosition = queuePosition.get(index);
+
+            LayoutParams params = new LayoutParams();
+            layoutParamsFromGridPosition(gridPosition, params);
+
+            //Set the column count
+            int newColumnCount = getNewColumnCount();
+
+            if (getColumnCount() < newColumnCount) {
+                setColumnCount(newColumnCount);
+                super.addView(child, index, params);
+                updateViews();
+            } else {
+                super.addView(child, index, params);
+                updateViews();
+                setColumnCount(newColumnCount);
+            }
+        }else{
+            throw new IndexOutOfBoundsException("index "+index+" cannot be less that -1 or more than size "+getImageCount());
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom){
-        super.onLayout(changed, left, top, right, bottom);
-        //if(changed) stops the infinite loop
-        updateLayoutRepresentation(getChildCount(), changed);
-        if(changed)
-            resetChildrenParams();
-        int columnCount = queue.getLast().getInverseWidth() > queue.getLast().getInverseHeight() ?
-                queue.getLast().getInverseWidth() : queue.getLast().getInverseHeight();
-        setColumnCount(columnCount);
-        updateViews();
-    }
-
-    final LayoutParams plainParams = new LayoutParams();
-    /**
-     * This is sort of a hack method.
-     * It's a precursor to setting column count, since reducing the column count throws an exception
-     */
-    private void resetChildrenParams(){
-        final int viewsCount = getChildCount();
-        for (int i = 0; i < viewsCount; i++) {
-            View view = getChildAt(i);
-            view.setLayoutParams(plainParams);
+    protected boolean addViewInLayout(View child, int index, ViewGroup.LayoutParams params, boolean preventRequestLayout){
+        if((index) <= getImageCount()){
+            return super.addViewInLayout(child, index, params, preventRequestLayout);
+        }else{
+            throw new IndexOutOfBoundsException();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
+        updateLayoutRepresentation(View.MeasureSpec.getSize(widthMeasureSpec), View.MeasureSpec.getSize(heightMeasureSpec), getChildCount(), true);
+
+        int newColumnCount = getNewColumnCount();
+
+        if (getColumnCount() < newColumnCount) {
+            setColumnCount(newColumnCount);
+            updateViews();
+        } else{
+            updateViews();
+            setColumnCount(newColumnCount);
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
     /**
      * {@inheritDoc}
      */

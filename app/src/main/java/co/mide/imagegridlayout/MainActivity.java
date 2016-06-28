@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                gridLayout.upNumColumns();
 //                gridLayout.setMinimumImageSize(300, 300);
             }
         });

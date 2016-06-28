@@ -16,8 +16,10 @@
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:layout_height="wrap_content">
+
             <co.mide.textimageview.TextImageView
                 android:layout_width="150dp"
+                app:textSize="20sp"
                 android:src="@drawable/image1"
                 android:layout_height="150dp" />
             <co.mide.imagegridlayout.ImageGridLayout
@@ -29,14 +31,42 @@
                 android:orientation="horizontal">
                 <co.mide.textimageview.TextImageView
                     app:text="poop"
-                    android:layout_width="150dp"
-                    android:src="@drawable/image1"
                     android:scaleType="centerCrop"
                     android:layout_height="150dp" />
                 <ImageView
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:src="@drawable/image1"
+                    android:scaleType="centerCrop"
+                    android:layout_width="250dp"
+                    android:layout_height="150dp"/>
+                <ImageView
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@mipmap/ic_launcher"
+                    android:scaleType="centerCrop"
+                    android:layout_width="250dp"
+                    android:layout_height="150dp"/>
+                <ImageView
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@mipmap/ic_launcher"
+                    android:scaleType="centerCrop"
+                    android:layout_width="250dp"
+                    android:layout_height="150dp"/>
+                <ImageView
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@mipmap/ic_launcher"
+                    android:scaleType="centerCrop"
+                    android:layout_width="250dp"
+                    android:layout_height="150dp"/>
+                <ImageView
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@mipmap/ic_launcher"
+                    android:scaleType="centerCrop"
+                    android:layout_width="250dp"
+                    android:layout_height="150dp"/>
+                <ImageView
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@mipmap/ic_launcher"
                     android:scaleType="centerCrop"
                     android:layout_width="250dp"
                     android:layout_height="150dp"/>

@@ -17,8 +17,8 @@ import android.widget.ImageView;
 @SuppressWarnings("unused")
 public class TextImageView extends ImageView {
     private String text;
-    private float textSize = -1;
-    private Paint paint, backgroundPaint;
+    private int textSize = -1;
+    private Paint textPaint, backgroundPaint;
 
     public TextImageView(Context context){
         super(context);
@@ -43,13 +43,13 @@ public class TextImageView extends ImageView {
         int backgroundColor = 0xffcccccc;
 
         //Initialize font
-        paint = new Paint(Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-        backgroundPaint = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        textPaint = new Paint();//Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        backgroundPaint = new Paint();//Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
 
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(textColor);
+        textPaint.setStyle(Paint.Style.STROKE);
+        textPaint.setColor(textColor);
         backgroundPaint.setColor(backgroundColor);
-        paint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     @SuppressWarnings("all")
@@ -60,11 +60,11 @@ public class TextImageView extends ImageView {
                 0, 0);
 
         try {
-            setTextColor(a.getColor(R.styleable.TextImageView_textColor, getTextColor()));
-            setImageBackgroundColor(a.getColor(R.styleable.TextImageView_backgroundColor, getImageBackgroundColor()));
+            textPaint.setColor(a.getColor(R.styleable.TextImageView_textColor, getTextColor()));
+            backgroundPaint.setColor(a.getColor(R.styleable.TextImageView_backgroundColor, getImageBackgroundColor()));
             if(a.hasValue(R.styleable.TextImageView_text))
-                setText(a.getString(R.styleable.TextImageView_text));
-            textSize = a.getFloat(R.styleable.TextImageView_textSize, textSize);
+                text = a.getString(R.styleable.TextImageView_text);
+            textSize = a.getDimensionPixelSize(R.styleable.TextImageView_textSize, textSize);
         } finally {
             a.recycle();
         }
@@ -76,20 +76,20 @@ public class TextImageView extends ImageView {
     }
 
     public TextImageView setTextColor(int color){
-        paint.setColor(color);
+        textPaint.setColor(color);
         invalidate();
-        requestLayout();
+//        requestLayout();
         return this;
     }
 
     public int getTextColor(){
-        return paint.getColor();
+        return textPaint.getColor();
     }
 
     public TextImageView setImageBackgroundColor(int color){
         backgroundPaint.setColor(color);
         invalidate();
-        requestLayout();
+//        requestLayout();
         return this;
     }
 
@@ -121,23 +121,23 @@ public class TextImageView extends ImageView {
             throw new IllegalArgumentException("text cannot be null");
         this.text = text;
         invalidate();
-        requestLayout();
+//        requestLayout();
         return this;
     }
 
-    public TextImageView setTextSize(float textSize){
+    /**
+     * This sets the text size of the text in the imageView
+     * @param textSize this is the size of the text in pixels
+     * @return the TextImageView for method chaining
+     */
+    public TextImageView setTextSize(int textSize){
         if(textSize <= 0)
             throw new IllegalArgumentException("textSize has to be greater than 0");
         this.textSize = textSize;
         invalidate();
-        requestLayout();
+//        requestLayout();
         return this;
     }
-
-//    @Override
-//    public void setImageDrawable(Drawable drawable){
-//        //Do nothing
-//    }
 
     /**
      * {@inheritDoc}
@@ -152,17 +152,17 @@ public class TextImageView extends ImageView {
         if(text == null)
             text = String.format("%d %c %d", getWidth(), multiplication, getHeight());
         if(textSize == -1) {
-            float newTextSize = (float)Math.max(Math.min(getWidth()/text.length()*1.15, getHeight()*0.5) ,5);
-            paint.setTextSize(newTextSize);
+            int newTextSize = (int)Math.max(Math.min(getWidth()/text.length()*1.15, getHeight()*0.5) ,5);
+            textPaint.setTextSize(newTextSize);
         }else{
-            paint.setTextSize(textSize);
+            textPaint.setTextSize(textSize);
         }
         if(text == null){
             text = "" + getWidth() + multiplication + getHeight();
         }
 
         int xPos = (canvas.getWidth() / 2);
-        int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2)) ;
+        int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
 
         canvas.drawColor(backgroundPaint.getColor());
         if(isInEditMode()) {
@@ -170,9 +170,8 @@ public class TextImageView extends ImageView {
             top = (int)(0.02222*canvas.getClipBounds().bottom);
             sides = (int)(0.2222*canvas.getClipBounds().bottom);
             canvas.drawRect(sides, canvas.getClipBounds().bottom/2 - top, canvas.getClipBounds().right - sides
-                    , canvas.getClipBounds().bottom/2 + top, paint);
+                    , canvas.getClipBounds().bottom/2 + top, textPaint);
         }
-        canvas.drawText(text, xPos, yPos, paint);
+        canvas.drawText(text, xPos, yPos, textPaint);
     }
 }
-
