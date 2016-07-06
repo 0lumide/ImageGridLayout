@@ -17,65 +17,13 @@
             android:orientation="vertical"
             android:layout_height="wrap_content">
 
-            <co.mide.textimageview.TextImageView
-                android:layout_width="150dp"
-                app:textSize="20sp"
-                android:src="@drawable/image1"
-                android:layout_height="150dp" />
             <co.mide.imagegridlayout.ImageGridLayout
-                android:layout_width="300dp"
-                android:layout_height="150dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/grid"
-                android:background="#fff000"
                 android:animateLayoutChanges="true"
                 android:orientation="horizontal">
-                <co.mide.textimageview.TextImageView
-                    app:text="poop"
-                    android:scaleType="centerCrop"
-                    android:layout_height="150dp" />
-                <ImageView
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:src="@drawable/image1"
-                    android:scaleType="centerCrop"
-                    android:layout_width="250dp"
-                    android:layout_height="150dp"/>
-                <ImageView
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@mipmap/ic_launcher"
-                    android:scaleType="centerCrop"
-                    android:layout_width="250dp"
-                    android:layout_height="150dp"/>
-                <ImageView
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@mipmap/ic_launcher"
-                    android:scaleType="centerCrop"
-                    android:layout_width="250dp"
-                    android:layout_height="150dp"/>
-                <ImageView
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@mipmap/ic_launcher"
-                    android:scaleType="centerCrop"
-                    android:layout_width="250dp"
-                    android:layout_height="150dp"/>
-                <ImageView
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@mipmap/ic_launcher"
-                    android:scaleType="centerCrop"
-                    android:layout_width="250dp"
-                    android:layout_height="150dp"/>
-                <ImageView
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@mipmap/ic_launcher"
-                    android:scaleType="centerCrop"
-                    android:layout_width="250dp"
-                    android:layout_height="150dp"/>
-                <ImageView
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@mipmap/ic_launcher"
-                    android:scaleType="centerCrop"
-                    android:layout_width="250dp"
-                    android:layout_height="150dp"/>
+
             </co.mide.imagegridlayout.ImageGridLayout>
         </LinearLayout>
     </ScrollView>
@@ -89,10 +37,10 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <Button
+    <EditText
         android:layout_alignParentBottom="true"
-        android:text="resize"
-        android:id="@+id/button1"
+        android:hint="0"
+        android:id="@+id/edittext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <Button

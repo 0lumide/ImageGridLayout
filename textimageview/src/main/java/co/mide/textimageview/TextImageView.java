@@ -6,8 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 /**
  * This is an imageView that automatically generates and sets its bitmap based on the text.
@@ -15,7 +15,7 @@ import android.widget.ImageView;
  * Created by Olumide on 6/18/2016.
  */
 @SuppressWarnings("unused")
-public class TextImageView extends ImageView {
+public class TextImageView extends ForegroundImageView {
     private String text;
     private int textSize = -1;
     private Paint textPaint, backgroundPaint;
@@ -70,59 +70,63 @@ public class TextImageView extends ImageView {
         }
     }
 
-    @Override
-    public void onSizeChanged (int w, int h, int oldw, int oldh){
-        super.onSizeChanged(w, h, oldw, oldh);
-    }
-
+    /**
+     * Set the color of the text. It defaults to black
+     * @param color the color of the text
+     * @return the TextImageView for method chaining
+     */
     public TextImageView setTextColor(int color){
         textPaint.setColor(color);
         invalidate();
-//        requestLayout();
         return this;
     }
 
+    /**
+     * @return the text color
+     */
     public int getTextColor(){
         return textPaint.getColor();
     }
 
+    /**
+     * Sets the background color of the image
+     * @param color the color to set teh background to
+     * @return the TextImageView for method chaining
+     */
     public TextImageView setImageBackgroundColor(int color){
         backgroundPaint.setColor(color);
         invalidate();
-//        requestLayout();
         return this;
     }
 
+    /**
+     * @return the background color
+     */
     public int getImageBackgroundColor(){
         return backgroundPaint.getColor();
     }
 
-    public TextImageView setImageWidth(int width){
-        if(width <= 1)
-            throw new IllegalArgumentException("width has to be greater than 1");
-        ViewGroup.LayoutParams params = getLayoutParams();
-        params.width = width;
-        setLayoutParams(params);
-        return this;
-    }
-
-    public TextImageView setImageHeight(int height){
-        if(height <= 1)
-            throw new IllegalArgumentException("height has to be greater than 1");
-        ViewGroup.LayoutParams params = getLayoutParams();
-        params.height = height;
-        setLayoutParams(params);
-        return this;
-    }
-
+    /**
+     * Sets the text of the image.
+     * Currently does not support multi line text
+     * @param text the text to be displayed in the image
+     * @return the TextImageView for method chaining
+     */
     @SuppressWarnings("all")
     public TextImageView setText(@NonNull String text){
         if(text == null)
             throw new IllegalArgumentException("text cannot be null");
         this.text = text;
         invalidate();
-//        requestLayout();
         return this;
+    }
+
+    /**
+     * returns the text rendered on the image.
+     * @return the text rendered on the image or null if none is set
+     */
+    public String getText(){
+        return text;
     }
 
     /**
@@ -135,7 +139,46 @@ public class TextImageView extends ImageView {
             throw new IllegalArgumentException("textSize has to be greater than 0");
         this.textSize = textSize;
         invalidate();
-//        requestLayout();
+        return this;
+    }
+
+    /**
+     * Sets the width of the image.
+     * If the view has no LayoutParams set, it
+     * creates a new LayoutParams with the width and height equal to width
+     * @param width the width to set the image to
+     * @return the TextImageView for method chaining
+     */
+    public TextImageView setImageWidth(int width){
+        if(width <= 1)
+            throw new IllegalArgumentException("width has to be greater than 1");
+        ViewGroup.LayoutParams params = getLayoutParams();
+        if(params == null) {
+            int height = width;//because of lint
+            params = new ViewGroup.LayoutParams(width, height);
+        }
+        params.width = width;
+        setLayoutParams(params);
+        return this;
+    }
+
+    /**
+     * Sets the height of the image
+     * If the view has no LayoutParams set, it
+     * creates a new LayoutParams with the width and height equal to height
+     * @param height the height to set the image to
+     * @return the TextImageView for method chaining
+     */
+    public TextImageView setImageHeight(int height){
+        if(height <= 1)
+            throw new IllegalArgumentException("height has to be greater than 1");
+        ViewGroup.LayoutParams params = getLayoutParams();
+        if(params == null) {
+            int width = height;
+            params = new ViewGroup.LayoutParams(width, height);
+        }
+        params.height = height;
+        setLayoutParams(params);
         return this;
     }
 
@@ -152,7 +195,7 @@ public class TextImageView extends ImageView {
         if(text == null)
             text = String.format("%d %c %d", getWidth(), multiplication, getHeight());
         if(textSize == -1) {
-            int newTextSize = (int)Math.max(Math.min(getWidth()/text.length()*1.15, getHeight()*0.5) ,5);
+            int newTextSize = (int)Math.min(Math.max(Math.min(getWidth()/text.length()*1.15, getHeight()*0.5) ,5), 512);
             textPaint.setTextSize(newTextSize);
         }else{
             textPaint.setTextSize(textSize);
@@ -160,6 +203,9 @@ public class TextImageView extends ImageView {
         if(text == null){
             text = "" + getWidth() + multiplication + getHeight();
         }
+
+        float[] widths = new float[text.length()];
+        textPaint.getTextWidths(text, widths);
 
         int xPos = (canvas.getWidth() / 2);
         int yPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;

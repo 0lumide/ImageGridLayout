@@ -6,4 +6,7 @@
         <attr name="text" format="string" />
         <attr name="textSize" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="ForegroundImageView">
+        <attr name="android:foreground"/>
+    </declare-styleable>
 </resources>
