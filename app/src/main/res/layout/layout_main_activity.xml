@@ -35,6 +35,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/image_limit_text"
+            android:textColor="#9e9e9e"
             android:layout_margin="1dp"
             android:gravity="bottom"
             android:layout_gravity="bottom"
