@@ -1,8 +1,4 @@
 <resources>
     <string name="app_name">Image GridLayout</string>
-    <plurals
-        name="more_images">
-        <item quantity="one">+%d more</item>
-        <item quantity="other">+%d more</item>
-    </plurals>
+    <string name="more_images">+%1$d more</string>
 </resources>

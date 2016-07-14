@@ -1,6 +1,7 @@
 package co.mide.imagegridlayout;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -56,6 +57,13 @@ public class ImageGridLayout extends GridLayout {
         super(context, attrs, defStyle);
         initAttributes(context, attrs);
         init();
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public ImageGridLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+        initAttributes(context, attrs);
     }
 
     private void initAttributes(Context context, AttributeSet attrs){
@@ -300,7 +308,11 @@ public class ImageGridLayout extends GridLayout {
             super.addView(child, index, params);
             updateViews();
         } else {
-            super.addView(child, index, params);
+            if(index == getImageCount() && index != getChildCount()){
+                super.addView(child, -1, params);
+            }else {
+                super.addView(child, index, params);
+            }
             updateViews();
             setColumnCount(newColumnCount);
         }
@@ -316,7 +328,10 @@ public class ImageGridLayout extends GridLayout {
 
         //setup overflow view
         if(extraImages > 0){
-            overflowView.setText(getContext().getResources().getQuantityString(R.plurals.more_images, extraImages, extraImages));
+            if(isInEditMode())
+                overflowView.setText("+"+extraImages+" more");
+            else
+                overflowView.setText(getResources().getString(R.string.more_images, extraImages));
             int color = ColorUtils.blendARGB(moreTextColor, moreColor, 0.4f);
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 RippleDrawable rippledImage = new RippleDrawable(

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <LinearLayout
@@ -9,13 +10,15 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:layout_height="wrap_content">
-
         <co.mide.imagegridlayout.ImageGridLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:maxImageCount="6"
             android:id="@+id/grid"
             android:animateLayoutChanges="true"
-            android:orientation="horizontal"/>
+            app:moreColor="#4e4e4e"
+            android:orientation="horizontal">
+        </co.mide.imagegridlayout.ImageGridLayout>
     </LinearLayout>
     <LinearLayout
         android:gravity="center_horizontal"

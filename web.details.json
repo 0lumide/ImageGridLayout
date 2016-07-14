@@ -1,0 +1,10 @@
+{
+    "title": "ImageGridLayout",
+    "description": "A layout library specifically for ImageViews.",
+    "details": "This is an ImageGridLayout android library. It's supposed to simplify the hassle of having images in GriView i.e not having to worry about order and setting the size of the imageViews manualy",
+    "iconImage": "img/icon.png",
+    "media": [
+        "img/screen1.png", "img/screen2.gif"
+    ],
+    "ignore": false
+}
