@@ -5,21 +5,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <LinearLayout
+    <co.mide.imagegridlayout.ImageGridLayout
         android:layout_width="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-        <co.mide.imagegridlayout.ImageGridLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:maxImageCount="6"
-            android:id="@+id/grid"
-            android:animateLayoutChanges="true"
-            app:moreColor="#4e4e4e"
-            android:orientation="horizontal">
-        </co.mide.imagegridlayout.ImageGridLayout>
-    </LinearLayout>
+        android:layout_height="match_parent"
+        app:maxImageCount="6"
+        android:id="@+id/grid"
+        android:layout_margin="1dp"
+        android:animateLayoutChanges="true"
+        app:moreColor="#4e4e4e"
+        android:orientation="horizontal">
+    </co.mide.imagegridlayout.ImageGridLayout>
     <LinearLayout
         android:gravity="center_horizontal"
         android:layout_width="match_parent"

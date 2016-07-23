@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -11,6 +12,7 @@ import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
@@ -30,7 +32,7 @@ import co.mide.textimageview.TextImageView;
 public class ImageGridLayout extends GridLayout {
     private LinkedList<GridPosition> queue;
     private HashMap<Integer, GridPosition> queuePosition;
-    private int MARGIN = 2;
+    private int MARGIN = (int)convertDpToPixel(1, getContext());
     private OnMoreClicked onMoreClickedCallback;
     private OnMoreLongClicked onMoreLongClickedCallback;
     private int moreColor = 0xff111111;
@@ -83,6 +85,20 @@ public class ImageGridLayout extends GridLayout {
     private void init(){
         queue = new LinkedList<>();
         queuePosition = new HashMap<>();
+    }
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public static float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
     }
 
     /**
