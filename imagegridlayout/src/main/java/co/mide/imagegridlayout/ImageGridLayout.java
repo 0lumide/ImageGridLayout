@@ -214,7 +214,7 @@ public class ImageGridLayout extends GridLayout {
     /**
      * @return the number of images displayed in the overflow view
      */
-    public int getExtraImagesCount(){
+    public int getMoreImagesCount(){
         return extraImages;
     }
 
@@ -224,7 +224,7 @@ public class ImageGridLayout extends GridLayout {
      * limit, the limit is automatically set to the current image count.
      * @param num the number to show i  the overflow view.
      */
-    public void setExtraImagesCount(int num) {
+    public void setMoreImagesCount(int num) {
         if (extraImages < 0)
             throw new IllegalArgumentException("num cannot be a negative number");
         if (getImageCount() < getMaxImagesCount())
