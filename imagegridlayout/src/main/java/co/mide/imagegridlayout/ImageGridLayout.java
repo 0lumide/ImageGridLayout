@@ -97,8 +97,7 @@ public class ImageGridLayout extends GridLayout {
     public static float convertDpToPixel(float dp, Context context){
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return px;
+        return dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
     /**
@@ -209,6 +208,36 @@ public class ImageGridLayout extends GridLayout {
             child.setLayoutParams(params);
             if(child instanceof ImageView)
                 ((ImageView)child).setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
+    }
+
+    /**
+     * @return the number of images displayed in the overflow view
+     */
+    public int getExtraImagesCount(){
+        return extraImages;
+    }
+
+    /**
+     * This method manually sets the number that is shown in the overflow view.
+     * Note that if this method is called before the number of images in the layout is less than the
+     * limit, the limit is automatically set to the current image count.
+     * @param num the number to show i  the overflow view.
+     */
+    public void setExtraImagesCount(int num) {
+        if (extraImages < 0)
+            throw new IllegalArgumentException("num cannot be a negative number");
+        if (getImageCount() < getMaxImagesCount())
+            setMaxImagesCount(getImageCount());
+        extraImages = num;
+
+        if (num == 0 && overflowView != null){
+            removeViewInLayout(overflowView);
+            overflowView = null;
+            updateLayoutRepresentation(getWidth(), getHeight(), getChildCount(), true);
+            updateViews();
+        }else {
+            handleOverflow();
         }
     }
 
@@ -333,8 +362,12 @@ public class ImageGridLayout extends GridLayout {
             setColumnCount(newColumnCount);
         }
 
+        handleOverflow();
+    }
+
+    private void handleOverflow(){
         //If max images reached
-        if(getImageCount() > getMaxImagesCount()){
+        if(getImageCount() >= getMaxImagesCount()){
             if(overflowView == null) {
                 overflowView = new TextImageView(getContext());
             }
@@ -344,10 +377,7 @@ public class ImageGridLayout extends GridLayout {
 
         //setup overflow view
         if(extraImages > 0){
-            if(isInEditMode())
-                overflowView.setText("+"+extraImages+" more");
-            else
-                overflowView.setText(getResources().getString(R.string.more_images, extraImages));
+            overflowView.setText(getResources().getString(R.string.more_images, extraImages));
             int color = ColorUtils.blendARGB(moreTextColor, moreColor, 0.4f);
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 RippleDrawable rippledImage = new RippleDrawable(
@@ -382,7 +412,6 @@ public class ImageGridLayout extends GridLayout {
             }
         }
     }
-
     /**
      * {@inheritDoc}
      */
