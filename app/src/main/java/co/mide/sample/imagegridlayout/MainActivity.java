@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.layout_main_activity);
         gridLayout = (ImageGridLayout)findViewById(R.id.grid);
         int limit = new Random().nextInt(12)+1;
-        gridLayout.setMaxImagesCount(limit);
+        gridLayout.setMaxImageCount(limit);
         ((TextView)findViewById(R.id.image_limit_text)).setText(getResources().getString(R.string.limit_text, limit));
         gridLayout.setOnMoreClickedCallback(new ImageGridLayout.OnMoreClicked() {
             @Override

@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.support.v4.graphics.ColorUtils;
@@ -37,7 +38,7 @@ public class ImageGridLayout extends GridLayout {
     private OnMoreLongClicked onMoreLongClickedCallback;
     private int moreColor = 0xff111111;
     private int moreTextColor = 0xffffffff;
-    private int maxImages = 11;//Integer.MAX_VALUE;
+    private int maxImage = 11;//Integer.MAX_VALUE;
     //This coincidentally also happens to be the same size as the smallest GridPosition
     private GridPosition lowerRightCorner;
     private TextImageView overflowView;
@@ -76,7 +77,7 @@ public class ImageGridLayout extends GridLayout {
 
         try {
             setMoreImagesColor(a.getColor(R.styleable.ImageGridLayout_moreColor, moreColor));
-            maxImages = a.getInt(R.styleable.ImageGridLayout_maxImageCount, maxImages);
+            maxImage = a.getInt(R.styleable.ImageGridLayout_maxImageCount, maxImage);
         } finally {
             a.recycle();
         }
@@ -106,15 +107,13 @@ public class ImageGridLayout extends GridLayout {
      * a number of images that equals the difference are discarded
      * @param count the maximum number of images the layout will contain
      */
-    public void setMaxImagesCount(int count){
-        maxImages = count;
-        if(getImageCount() > maxImages){
+    public void setMaxImageCount(int count){
+        maxImage = count;
+        if(getImageCount() > maxImage){
             removeExtraViews();
-            updateLayoutRepresentation(getWidth(), getHeight(), maxImages+1, true);
+            updateLayoutRepresentation(getWidth(), getHeight(), maxImage +1, true);
             updateViews();
-            invalidate();
-            requestLayout();
-        }else if(getImageCount() < maxImages){
+        }else if(getImageCount() < maxImage){
             if(overflowView != null && overflowView.getParent() == this) {
                 updateLayoutRepresentation(getWidth(), getHeight(), getChildCount() - 1, true);
                 removeView(overflowView);
@@ -129,8 +128,8 @@ public class ImageGridLayout extends GridLayout {
      * There is no limit by default.
      * @return the maximum number of images the layout will accept
      */
-    public int getMaxImagesCount(){
-        return maxImages;
+    public int getMaxImageCount(){
+        return maxImage;
     }
 
     /**
@@ -165,6 +164,7 @@ public class ImageGridLayout extends GridLayout {
      */
     public void setOnMoreClickedCallback(OnMoreClicked callback){
         this.onMoreClickedCallback = callback;
+        addClickListeners();
         if(callback == null && overflowView != null)
             overflowView.setClickable(false);
     }
@@ -176,6 +176,7 @@ public class ImageGridLayout extends GridLayout {
      */
     public void setOnMoreLongClickedCallback(OnMoreLongClicked callback){
         this.onMoreLongClickedCallback = callback;
+        addClickListeners();
         if(callback == null && overflowView != null)
             overflowView.setClickable(false);
     }
@@ -227,8 +228,8 @@ public class ImageGridLayout extends GridLayout {
     public void setMoreImagesCount(int num) {
         if (extraImages < 0)
             throw new IllegalArgumentException("num cannot be a negative number");
-        if (getImageCount() < getMaxImagesCount())
-            setMaxImagesCount(getImageCount());
+        if (getImageCount() < getMaxImageCount())
+            setMaxImageCount(getImageCount());
         extraImages = num;
 
         if (num == 0 && overflowView != null){
@@ -243,7 +244,7 @@ public class ImageGridLayout extends GridLayout {
 
     private void removeExtraViews(){
         viewRemovedFlag = true;
-        while(getImageCount() > maxImages) {
+        while(getImageCount() > maxImage) {
             int removeIndex = getChildAt(getChildCount() - 1) != overflowView ? getChildCount() - 1 : getChildCount() - 2;
             extraImages++;
             removeViewAt(removeIndex);
@@ -283,7 +284,7 @@ public class ImageGridLayout extends GridLayout {
         }
 
         //Check one step into the future for lowerRightCorner
-        if(queue.size() > 0 && queue.size() <= maxImages) {
+        if(queue.size() > 0 && queue.size() <= maxImage) {
             GridPosition cloned = queue.getFirst().clone();
             GridPosition potentialCorner = cloned.splitPosition();
             potentialCorner.setIndex(queue.size());
@@ -334,7 +335,7 @@ public class ImageGridLayout extends GridLayout {
      * Add view to layout without index checking
      */
     private void addView1(View child, int index){
-        if(getChildCount() <= getMaxImagesCount()) {
+        if(getChildCount() <= getMaxImageCount()) {
             updateLayoutRepresentation(getWidth(), getHeight(), getChildCount() + 1, false);
         }
 
@@ -367,7 +368,7 @@ public class ImageGridLayout extends GridLayout {
 
     private void handleOverflow(){
         //If max images reached
-        if(getImageCount() >= getMaxImagesCount()){
+        if(getImageCount() >= getMaxImageCount()){
             if(overflowView == null) {
                 overflowView = new TextImageView(getContext());
             }
@@ -383,21 +384,39 @@ public class ImageGridLayout extends GridLayout {
                 RippleDrawable rippledImage = new RippleDrawable(
                         ColorStateList.valueOf(color), null, null);
                 overflowView.setForeground(rippledImage);
+            }else{
+                int[] attrs = new int[] { android.R.attr.selectableItemBackground /* index 0 */};
+                TypedArray ta = getContext().obtainStyledAttributes(attrs);
+                Drawable drawableFromTheme = ta.getDrawable(0 /* index */);
+                ta.recycle();
+                overflowView.setForeground(drawableFromTheme);
             }
             overflowView.setTextColor(moreTextColor).setImageBackgroundColor(moreColor);
 
-            if (onMoreClickedCallback != null) {
+            addClickListeners();
+
+            if(overflowView.getParent() != this) {
+                addView1(overflowView, lowerRightCorner.getIndex());
+            }
+        }
+    }
+
+    private void addClickListeners(){
+        if (onMoreClickedCallback != null) {
+            if(overflowView != null) {
                 overflowView.setClickable(true);
                 overflowView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(onMoreClickedCallback != null)
+                        if (onMoreClickedCallback != null)
                             onMoreClickedCallback.onMoreClicked(ImageGridLayout.this);
                     }
                 });
             }
+        }
 
-            if (onMoreLongClickedCallback != null) {
+        if (onMoreLongClickedCallback != null) {
+            if (overflowView != null) {
                 overflowView.setClickable(true);
                 overflowView.setOnLongClickListener(new OnLongClickListener() {
                     @Override
@@ -407,11 +426,10 @@ public class ImageGridLayout extends GridLayout {
                     }
                 });
             }
-            if(overflowView.getParent() != this) {
-                addView1(overflowView, lowerRightCorner.getIndex());
-            }
         }
+
     }
+
     /**
      * {@inheritDoc}
      */
@@ -436,9 +454,11 @@ public class ImageGridLayout extends GridLayout {
         if (getColumnCount() < newColumnCount) {
             setColumnCount(newColumnCount);
             updateViews();
-        } else{
+        } else if (getColumnCount() > newColumnCount){
             updateViews();
             setColumnCount(newColumnCount);
+        }else{
+            updateViews();
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
@@ -450,7 +470,7 @@ public class ImageGridLayout extends GridLayout {
     public void onViewRemoved(View view) {
         super.onViewRemoved(view);
         if (view != overflowView){
-            if (extraImages < 0 || getImageCount() < getMaxImagesCount()) {
+            if (extraImages < 0 || getImageCount() < getMaxImageCount()) {
                 extraImages = 0;
             }if (overflowView != null && overflowView.getParent() == this && !viewRemovedFlag) {
                 removeView(overflowView);
